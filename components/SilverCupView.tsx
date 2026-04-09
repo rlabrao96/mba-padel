@@ -1,7 +1,7 @@
 'use client';
 
 import { BracketMatch, MatchMeta } from './BracketMatch';
-import { CupHeader, Placeholder, Round } from './GoldCupView';
+import { CupHeader, Placeholder } from './GoldCupView';
 import {
   BracketScores,
   bracketResult,
@@ -59,35 +59,20 @@ export function SilverCupView({ classification, bracketScores, onChange }: Props
         subtitle="Gold Cup Quarterfinal losers · Semifinals → Final"
       />
 
-      <div className="bracket-scroll -mx-3 overflow-x-auto px-3 pb-3 sm:-mx-4 sm:px-4">
-        <div className="flex items-start gap-6 min-w-max sm:items-center sm:gap-8">
-          <Round title="Semifinals">
-            {sf.map((match, i) => (
-              <BracketMatch
-                key={`sf-${i}`}
-                cup="silver"
-                round="sf"
-                matchIdx={i}
-                teams={match}
-                scores={bracketScores}
-                onChange={onChange}
-                format="2-sets"
-                meta={SILVER_SF_META[i]}
-              />
-            ))}
-          </Round>
-          <Round title="Final">
-            <BracketMatch
-              cup="silver"
-              round="f"
-              matchIdx={0}
-              teams={final}
-              scores={bracketScores}
-              onChange={onChange}
-              format="2-sets"
-              meta={SILVER_FINAL_META}
-            />
-          </Round>
+      <div className="bracket-scroll -mx-3 overflow-x-auto px-3 pb-4 sm:-mx-4 sm:px-4">
+        {/* Round titles */}
+        <div className="mb-3 flex min-w-max gap-4 sm:gap-6">
+          <div className="w-[280px] text-center font-display text-sm tracking-[0.18em] text-text-dim sm:w-[300px]">Semifinals</div>
+          <div className="w-[280px] text-center font-display text-sm tracking-[0.18em] text-text-dim sm:w-[300px]">Final</div>
+        </div>
+
+        {/* Nested layout — Final centered between the two SFs */}
+        <div className="flex min-w-max items-center gap-4 sm:gap-6">
+          <div className="flex flex-col gap-3">
+            <BracketMatch cup="silver" round="sf" matchIdx={0} teams={sf[0]} scores={bracketScores} onChange={onChange} format="2-sets" meta={SILVER_SF_META[0]} />
+            <BracketMatch cup="silver" round="sf" matchIdx={1} teams={sf[1]} scores={bracketScores} onChange={onChange} format="2-sets" meta={SILVER_SF_META[1]} />
+          </div>
+          <BracketMatch cup="silver" round="f" matchIdx={0} teams={final} scores={bracketScores} onChange={onChange} format="2-sets" meta={SILVER_FINAL_META} />
         </div>
       </div>
     </div>

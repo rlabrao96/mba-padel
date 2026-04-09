@@ -101,75 +101,54 @@ export function GoldCupView({ classification, bracketScores, onChange }: Props) 
         </div>
       )}
 
-      <div className="bracket-scroll -mx-3 overflow-x-auto px-3 pb-3 sm:-mx-4 sm:px-4">
-        <div className="flex items-start gap-6 min-w-max sm:gap-8">
-          <Round title="Quarterfinals">
-            {qf.map((match, i) => (
-              <BracketMatch
-                key={`qf-${i}`}
-                cup="gold"
-                round="qf"
-                matchIdx={i}
-                teams={match}
-                scores={bracketScores}
-                onChange={onChange}
-                meta={GOLD_QF_META[i]}
-                format="2-sets"
-              />
-            ))}
-          </Round>
+      {/* Main bracket: QF → SF → Final */}
+      <div className="bracket-scroll -mx-3 overflow-x-auto px-3 pb-4 sm:-mx-4 sm:px-4">
+        {/* Round titles */}
+        <div className="mb-3 flex min-w-max gap-4 sm:gap-6">
+          <div className="w-[280px] text-center font-display text-sm tracking-[0.18em] text-text-dim sm:w-[300px]">Quarterfinals</div>
+          <div className="w-[280px] text-center font-display text-sm tracking-[0.18em] text-text-dim sm:w-[300px]">Semifinals</div>
+          <div className="w-[280px] text-center font-display text-sm tracking-[0.18em] text-text-dim sm:w-[300px]">Final</div>
+        </div>
 
-          <Round title="Semifinals">
-            {sf.map((match, i) => (
-              <BracketMatch
-                key={`sf-${i}`}
-                cup="gold"
-                round="sf"
-                matchIdx={i}
-                teams={match}
-                scores={bracketScores}
-                onChange={onChange}
-                meta={GOLD_SF_META[i]}
-                format="2-sets"
-              />
-            ))}
-          </Round>
-
-          <div className="flex flex-col gap-5">
-            <div className="text-center font-display text-sm tracking-[0.18em] text-text-dim">
-              Finals
-            </div>
-            <div className="flex flex-col gap-2">
-              <div className="text-center text-[10px] font-semibold uppercase tracking-[0.16em] text-amber-300">
-                🥇 Gold Final (Best of 3)
+        {/* Nested bracket — each next round is centered between its feeders */}
+        <div className="flex min-w-max items-center gap-4 sm:gap-6">
+          {/* QF → SF pairs */}
+          <div className="flex flex-col gap-8">
+            {/* Top half: QF1 + QF2 → SF1 */}
+            <div className="flex items-center gap-4 sm:gap-6">
+              <div className="flex flex-col gap-3">
+                <BracketMatch cup="gold" round="qf" matchIdx={0} teams={qf[0]} scores={bracketScores} onChange={onChange} meta={GOLD_QF_META[0]} format="2-sets" />
+                <BracketMatch cup="gold" round="qf" matchIdx={1} teams={qf[1]} scores={bracketScores} onChange={onChange} meta={GOLD_QF_META[1]} format="2-sets" />
               </div>
-              <BracketMatch
-                cup="gold"
-                round="f"
-                matchIdx={0}
-                teams={final}
-                scores={bracketScores}
-                onChange={onChange}
-                meta={GOLD_FINAL_META}
-                format="3-sets"
-              />
+              <BracketMatch cup="gold" round="sf" matchIdx={0} teams={sf[0]} scores={bracketScores} onChange={onChange} meta={GOLD_SF_META[0]} format="2-sets" />
             </div>
-            <div className="flex flex-col gap-2">
-              <div className="text-center text-[10px] font-semibold uppercase tracking-[0.16em] text-orange-300">
-                🥉 3rd Place Match
+            {/* Bottom half: QF3 + QF4 → SF2 */}
+            <div className="flex items-center gap-4 sm:gap-6">
+              <div className="flex flex-col gap-3">
+                <BracketMatch cup="gold" round="qf" matchIdx={2} teams={qf[2]} scores={bracketScores} onChange={onChange} meta={GOLD_QF_META[2]} format="2-sets" />
+                <BracketMatch cup="gold" round="qf" matchIdx={3} teams={qf[3]} scores={bracketScores} onChange={onChange} meta={GOLD_QF_META[3]} format="2-sets" />
               </div>
-              <BracketMatch
-                cup="gold"
-                round="3p"
-                matchIdx={0}
-                teams={thirdPlace}
-                scores={bracketScores}
-                onChange={onChange}
-                format="2-sets"
-                meta={GOLD_3P_META}
-              />
+              <BracketMatch cup="gold" round="sf" matchIdx={1} teams={sf[1]} scores={bracketScores} onChange={onChange} meta={GOLD_SF_META[1]} format="2-sets" />
             </div>
           </div>
+
+          {/* Final — centered between SF1 and SF2 */}
+          <div>
+            <div className="mb-2 text-center text-[10px] font-semibold uppercase tracking-[0.16em] text-amber-300">
+              🥇 Best of 3
+            </div>
+            <BracketMatch cup="gold" round="f" matchIdx={0} teams={final} scores={bracketScores} onChange={onChange} meta={GOLD_FINAL_META} format="3-sets" />
+          </div>
+        </div>
+      </div>
+
+      {/* 3rd Place — standalone below the bracket */}
+      <div className="mt-6">
+        <div className="mb-2 text-center text-[10px] font-semibold uppercase tracking-[0.16em] text-orange-300 sm:text-left">
+          🥉 3rd Place Match (SF losers)
+        </div>
+        <div className="flex justify-center sm:justify-start">
+          <BracketMatch cup="gold" round="3p" matchIdx={0} teams={thirdPlace} scores={bracketScores} onChange={onChange} format="2-sets" meta={GOLD_3P_META} />
         </div>
       </div>
     </div>
