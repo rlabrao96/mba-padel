@@ -109,7 +109,10 @@ const SUNDAY: Slot[] = [
   },
   {
     time: '1:00 PM',
-    matches: [{ court: 1, group: 'Silver Final', tint: 'silver', label: '🏆 Final' }],
+    matches: [
+      { court: 1, group: 'Silver Final', tint: 'silver', label: '🏆 Final' },
+      { court: 2, group: 'Gold 3rd Place', tint: 'gold', label: '🥉 3rd Place Match' },
+    ],
   },
   {
     time: '2:00 PM',

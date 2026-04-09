@@ -54,6 +54,11 @@ export function RulesView() {
             <strong>Gold Cup SF:</strong> W(1v8) vs W(4v5) · W(2v7) vs W(3v6).
           </li>
           <li>
+            <strong>Gold Cup Final + 3rd Place Match:</strong> The two SF
+            winners play for the trophy; the two SF losers play a separate
+            match for 3rd place.
+          </li>
+          <li>
             <strong>Silver Cup:</strong> The four Gold Cup QF losers (SF → Final).
           </li>
           <li>

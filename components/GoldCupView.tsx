@@ -1,6 +1,7 @@
 'use client';
 
 import { BracketMatch } from './BracketMatch';
+import { getTeam } from '@/lib/data';
 import {
   BracketScores,
   bracketResult,
@@ -43,28 +44,52 @@ export function GoldCupView({ classification, bracketScores, onChange }: Props) 
     [qfWinners[2], qfWinners[3]],
   ];
 
-  const sfWinners: Array<QualifiedTeam | null> = sf.map((m, i) =>
-    bracketResult(bracketScores, 'gold', 'sf', i, m).winner,
+  const sfResults = sf.map((m, i) =>
+    bracketResult(bracketScores, 'gold', 'sf', i, m),
   );
+  const sfWinners = sfResults.map((r) => r.winner);
+  const sfLosers = sfResults.map((r) => r.loser);
 
   const final: [QualifiedTeam | null, QualifiedTeam | null] = [sfWinners[0], sfWinners[1]];
+  const thirdPlace: [QualifiedTeam | null, QualifiedTeam | null] = [sfLosers[0], sfLosers[1]];
+
   const champion = bracketResult(bracketScores, 'gold', 'f', 0, final).winner;
+  const runnerUp = bracketResult(bracketScores, 'gold', 'f', 0, final).loser;
+  const thirdPlaceWinner = bracketResult(bracketScores, 'gold', '3p', 0, thirdPlace).winner;
 
   return (
     <div>
-      <CupHeader tone="gold" title="🥇 Gold Cup" subtitle="Top 8 teams · Quarterfinals → Final" />
+      <CupHeader
+        tone="gold"
+        title="🥇 Gold Cup"
+        subtitle="Top 8 teams · QF → SF → Final + 3rd Place Match"
+      />
 
-      {champion && (
-        <div className="mb-6 rounded-2xl border border-amber-400/50 bg-amber-400/10 p-5 text-center">
-          <div className="text-xs uppercase tracking-[0.2em] text-amber-200">Champion</div>
-          <div className="mt-1 font-display text-3xl tracking-wider text-amber-300">
-            #{champion.id} · {champion.seed && `Seed ${champion.seed} · `}
-          </div>
+      {(champion || thirdPlaceWinner) && (
+        <div className="mb-6 grid gap-3 sm:grid-cols-3">
+          <PodiumCard
+            rank="1st"
+            medal="🥇"
+            accent="amber"
+            team={champion}
+          />
+          <PodiumCard
+            rank="2nd"
+            medal="🥈"
+            accent="slate"
+            team={champion ? runnerUp : null}
+          />
+          <PodiumCard
+            rank="3rd"
+            medal="🥉"
+            accent="orange"
+            team={thirdPlaceWinner}
+          />
         </div>
       )}
 
-      <div className="bracket-scroll -mx-4 overflow-x-auto px-4 pb-3">
-        <div className="flex items-center gap-8 min-w-max">
+      <div className="bracket-scroll -mx-3 overflow-x-auto px-3 pb-3 sm:-mx-4 sm:px-4">
+        <div className="flex items-start gap-6 min-w-max sm:gap-8">
           <Round title="Quarterfinals">
             {qf.map((match, i) => (
               <BracketMatch
@@ -93,18 +118,73 @@ export function GoldCupView({ classification, bracketScores, onChange }: Props) 
             ))}
           </Round>
 
-          <Round title="Final">
-            <BracketMatch
-              cup="gold"
-              round="f"
-              matchIdx={0}
-              teams={final}
-              scores={bracketScores}
-              onChange={onChange}
-            />
-          </Round>
+          <div className="flex flex-col gap-5">
+            <div className="text-center font-display text-sm tracking-[0.18em] text-text-dim">
+              Finals
+            </div>
+            <div className="flex flex-col gap-2">
+              <div className="text-center text-[10px] font-semibold uppercase tracking-[0.16em] text-amber-300">
+                🥇 Gold Final
+              </div>
+              <BracketMatch
+                cup="gold"
+                round="f"
+                matchIdx={0}
+                teams={final}
+                scores={bracketScores}
+                onChange={onChange}
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <div className="text-center text-[10px] font-semibold uppercase tracking-[0.16em] text-orange-300">
+                🥉 3rd Place Match
+              </div>
+              <BracketMatch
+                cup="gold"
+                round="3p"
+                matchIdx={0}
+                teams={thirdPlace}
+                scores={bracketScores}
+                onChange={onChange}
+              />
+            </div>
+          </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function PodiumCard({
+  rank,
+  medal,
+  accent,
+  team,
+}: {
+  rank: string;
+  medal: string;
+  accent: 'amber' | 'slate' | 'orange';
+  team: QualifiedTeam | null;
+}) {
+  const accentCls =
+    accent === 'amber'
+      ? 'border-amber-400/50 bg-amber-400/10 text-amber-200'
+      : accent === 'slate'
+        ? 'border-slate-300/40 bg-slate-300/10 text-slate-200'
+        : 'border-orange-500/40 bg-orange-500/10 text-orange-200';
+  const info = team ? getTeam(team.id) : null;
+  return (
+    <div className={`rounded-2xl border p-4 text-center ${accentCls}`}>
+      <div className="text-[10px] uppercase tracking-[0.18em]">{rank}</div>
+      <div className="mt-1 font-display text-xl tracking-wider">
+        {medal} {info ? info.short : 'TBD'}
+      </div>
+      {info && (
+        <div className="mt-0.5 text-[10px] text-text-dim">
+          #{info.id} · {info.school}
+          {team?.seed ? ` · Seed ${team.seed}` : ''}
+        </div>
+      )}
     </div>
   );
 }

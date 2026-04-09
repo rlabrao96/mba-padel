@@ -5,7 +5,7 @@ import { BracketScores, QualifiedTeam } from '@/lib/standings';
 
 type Props = {
   cup: 'gold' | 'silver' | 'bronze';
-  round: 'qf' | 'sf' | 'f';
+  round: 'qf' | 'sf' | 'f' | '3p';
   matchIdx: number;
   teams: [QualifiedTeam | null, QualifiedTeam | null];
   scores: BracketScores;
