@@ -97,15 +97,17 @@ const SUNDAY: Slot[] = [
   {
     time: '11:00 AM',
     matches: [
-      { court: 1, group: 'Gold SF',   tint: 'gold',   label: 'W(1v8) vs W(4v5)' },
-      { court: 2, group: 'Gold SF',   tint: 'gold',   label: 'W(2v7) vs W(3v6)' },
-      { court: 3, group: 'Silver SF', tint: 'silver', label: 'L(1v8) vs L(4v5)' },
-      { court: 4, group: 'Silver SF', tint: 'silver', label: 'L(2v7) vs L(3v6)' },
+      { court: 1, group: 'Silver SF',    tint: 'silver', label: 'L(1v8) vs L(4v5)' },
+      { court: 2, group: 'Silver SF',    tint: 'silver', label: 'L(2v7) vs L(3v6)' },
+      { court: 3, group: 'Bronze Final', tint: 'bronze', label: '🏆 Final' },
     ],
   },
   {
     time: '12:00 PM',
-    matches: [{ court: 1, group: 'Bronze Final', tint: 'bronze', label: '🏆 Final' }],
+    matches: [
+      { court: 1, group: 'Gold SF', tint: 'gold', label: 'W(1v8) vs W(4v5)' },
+      { court: 2, group: 'Gold SF', tint: 'gold', label: 'W(2v7) vs W(3v6)' },
+    ],
   },
   {
     time: '1:00 PM',

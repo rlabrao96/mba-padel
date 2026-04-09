@@ -74,8 +74,9 @@ export function RulesView() {
             + Gold QF + Bronze SF.
           </li>
           <li>
-            <strong>Sunday April 12 · 11:00 AM – 3:00 PM:</strong> Gold SF,
-            Silver Cup, all Finals.
+            <strong>Sunday April 12 · 11:00 AM – 3:00 PM:</strong> Silver SF +
+            Bronze Final (11 AM), Gold SF (12 PM), Silver Final + Gold 3rd
+            Place (1 PM), Gold Grand Final (2 PM).
           </li>
           <li>4 courts available throughout.</li>
         </ul>
