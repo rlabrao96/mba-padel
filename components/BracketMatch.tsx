@@ -60,14 +60,21 @@ export function BracketMatch({ cup, round, matchIdx, teams, scores, onChange, me
   const set1T2 = scores[`${prefix}-2-s1`] ?? '';
   const set2T1 = scores[`${prefix}-1-s2`] ?? '';
   const set2T2 = scores[`${prefix}-2-s2`] ?? '';
+  const set3T1 = scores[`${prefix}-1-s3`] ?? '';
+  const set3T2 = scores[`${prefix}-2-s3`] ?? '';
 
   const set1Filled = set1T1 !== '' && set1T2 !== '';
   const set2Filled = set2T1 !== '' && set2T2 !== '';
+  const set3HasData = set3T1 !== '' || set3T2 !== '';
 
   // Show set 3 column when:
-  // - format is '2-sets' and sets are tied 1-1 (super tie-break)
-  // - format is '3-sets' and sets are tied 1-1
-  const showSet3 = set1Filled && set2Filled && setsWon[0] === 1 && setsWon[1] === 1;
+  // - sets are tied 1-1 (user needs to enter the TB / 3rd set), OR
+  // - any set 3 score is already present (keep the column visible after
+  //   the TB is entered so the result stays visible for the rest of the
+  //   tournament)
+  const showSet3 =
+    set3HasData ||
+    (set1Filled && set2Filled && setsWon[0] === 1 && setsWon[1] === 1);
 
   const setLabels = format === '2-sets'
     ? ['S1', 'S2', ...(showSet3 ? ['TB'] : [])]
