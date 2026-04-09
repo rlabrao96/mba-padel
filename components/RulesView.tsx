@@ -9,19 +9,24 @@ export function RulesView() {
       </InfoBox>
 
       <InfoBox title="Match formats">
+        <p>
+          <strong>Deuce rule (all matches):</strong> At 40–40, one advantage
+          point is played. If the advantage is lost (deuce again), the next
+          point is a <em>golden point</em> — sudden death, whoever wins it
+          takes the game.
+        </p>
         <ul>
           <li>
-            <strong>Group stage:</strong> Super Set to 8 games with golden
-            point (at 40–40, the next point wins the game — no advantage).
+            <strong>Group stage:</strong> Super Set to 8 games. Tie-break at
+            7–7.
           </li>
           <li>
             <strong>Knockout rounds (QF, SF, Silver/Bronze cups):</strong> 2
-            sets with advantage point. If tied at one set each, a Super
-            Tie-Break (10 points) decides the match.
+            sets. If tied at one set each, a Super Tie-Break (10 points)
+            decides the match.
           </li>
           <li>
-            <strong>Gold Cup Final:</strong> Best of 3 sets with advantage
-            point.
+            <strong>Gold Cup Final:</strong> Best of 3 sets.
           </li>
         </ul>
       </InfoBox>
