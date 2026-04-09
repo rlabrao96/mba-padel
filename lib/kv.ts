@@ -68,24 +68,12 @@ async function getConnectedClient(): Promise<Redis | null> {
   }
 
   connectPromise = (async () => {
-    let parsedHost = '';
-    try {
-      parsedHost = new URL(url).hostname;
-    } catch {
-      // let ioredis handle parse errors
-    }
-
-    const wantsTls =
-      url.startsWith('rediss://') ||
-      parsedHost.endsWith('.redislabs.com') ||
-      parsedHost.endsWith('.redns.redis-cloud.com') ||
-      parsedHost.endsWith('.upstash.io');
-
+    // Trust the URL scheme: redis:// = plain, rediss:// = TLS.
+    // ioredis handles rediss:// natively. No manual TLS override needed.
     const client = new Redis(url, {
       lazyConnect: true,
       maxRetriesPerRequest: 2,
       connectTimeout: 5_000,
-      ...(wantsTls ? { tls: { rejectUnauthorized: false } } : {}),
     });
 
     client.on('error', (err) => {
