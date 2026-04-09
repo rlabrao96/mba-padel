@@ -107,11 +107,14 @@ export function GoldCupView({ classification, bracketScores, onChange }: Props) 
         <div className="mb-3 flex min-w-max gap-4 sm:gap-6">
           <div className="w-[280px] text-center font-display text-sm tracking-[0.18em] text-text-dim sm:w-[300px]">Quarterfinals</div>
           <div className="w-[280px] text-center font-display text-sm tracking-[0.18em] text-text-dim sm:w-[300px]">Semifinals</div>
-          <div className="w-[280px] text-center font-display text-sm tracking-[0.18em] text-text-dim sm:w-[300px]">Finals</div>
+          <div className="w-[280px] text-center font-display text-sm tracking-[0.18em] text-text-dim sm:w-[300px]">Final</div>
         </div>
 
-        {/* Nested bracket — each next round is centered between its feeders */}
-        <div className="flex min-w-max items-center gap-4 sm:gap-6">
+        {/* Nested bracket — each next round is centered between its feeders.
+            Extra bottom padding reserves space for the absolutely-positioned
+            3rd Place Match card that sits below the Final without affecting
+            the Final's vertical centering between SF1 and SF2. */}
+        <div className="flex min-w-max items-center gap-4 pb-52 sm:gap-6">
           {/* QF → SF pairs */}
           <div className="flex flex-col gap-8">
             {/* Top half: QF1 + QF2 → SF1 */}
@@ -132,15 +135,17 @@ export function GoldCupView({ classification, bracketScores, onChange }: Props) 
             </div>
           </div>
 
-          {/* Final + 3rd Place stacked — the group is centered between SF1 and SF2 */}
-          <div className="flex flex-col gap-5">
+          {/* Finals column — Final is centered by items-center. 3rd Place is
+              absolutely positioned below the Final so it doesn't contribute
+              to the column height and therefore doesn't shift the Final. */}
+          <div className="relative">
             <div>
               <div className="mb-2 text-center text-[10px] font-semibold uppercase tracking-[0.16em] text-amber-300">
                 🥇 Gold Final (Best of 3)
               </div>
               <BracketMatch cup="gold" round="f" matchIdx={0} teams={final} scores={bracketScores} onChange={onChange} meta={GOLD_FINAL_META} format="3-sets" />
             </div>
-            <div>
+            <div className="absolute left-0 right-0 top-full pt-6">
               <div className="mb-2 text-center text-[10px] font-semibold uppercase tracking-[0.16em] text-orange-300">
                 🥉 3rd Place Match (SF losers)
               </div>
