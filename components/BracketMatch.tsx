@@ -188,7 +188,7 @@ function TeamRow({
               inputMode="numeric"
               type="number"
               min={0}
-              max={isLastTB ? 99 : 7}
+              max={isLastTB ? 10 : 7}
               value={value}
               disabled={!team}
               onChange={(e) => onChange(key, e.target.value)}
