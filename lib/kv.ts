@@ -1,4 +1,4 @@
-import Redis from 'ioredis';
+import { createClient } from 'redis';
 import type { GroupMatches, BracketScores } from './standings';
 
 export type TournamentState = {
@@ -13,107 +13,83 @@ export type TournamentState = {
   };
 };
 
-const EMPTY_STATE: Omit<TournamentState, 'persistent'> = {
+const EMPTY: Omit<TournamentState, 'persistent'> = {
   rev: 0,
   groupMatches: {},
   bracketScores: {},
 };
 
-const K_STATE = 'tournament:state:v1';
+const K = 'tournament:state:v1';
 
-let memoryState: Omit<TournamentState, 'persistent'> = {
-  ...EMPTY_STATE,
-  groupMatches: {},
-  bracketScores: {},
-};
-
-let lastClientError: string | null = null;
+let memoryState = { ...EMPTY, groupMatches: {}, bracketScores: {} };
+let lastError: string | null = null;
 
 function describeEnv(): string {
-  const present = [
-    ['REDIS_URL', process.env.REDIS_URL],
-    ['KV_URL', process.env.KV_URL],
-  ]
-    .filter(([, v]) => !!v)
-    .map(([k, v]) => {
-      try {
-        const u = new URL(v as string);
-        return `${k}=${u.protocol}//***@${u.host}`;
-      } catch {
-        return `${k}=<unparseable>`;
-      }
-    });
-  return present.length ? present.join(', ') : '<none>';
+  const url = process.env.REDIS_URL ?? process.env.KV_URL;
+  if (!url) return '<none>';
+  try {
+    const u = new URL(url);
+    return `REDIS_URL=${u.protocol}//***@${u.host}`;
+  } catch {
+    return 'REDIS_URL=<unparseable>';
+  }
 }
 
-// Cached connect promise. Module-level so warm Vercel instances reuse
-// the same connection across invocations.
-let connectPromise: Promise<Redis> | null = null;
+// Exactly the pattern Vercel's docs show for Next.js App Router:
+// module-level await createClient().connect()
+// Cached across warm serverless invocations.
+let clientPromise: ReturnType<typeof createClient> | null = null;
 
-/**
- * Return a connected Redis client. Uses lazyConnect + explicit await connect()
- * so we never issue commands before the TCP/TLS handshake completes.
- */
-async function getConnectedClient(): Promise<Redis | null> {
+async function getClient(): Promise<ReturnType<typeof createClient> | null> {
   const url = process.env.REDIS_URL ?? process.env.KV_URL;
   if (!url) return null;
 
-  if (connectPromise) {
+  if (clientPromise) {
     try {
-      return await connectPromise;
+      // If already connected, return it. If connection dropped, isReady is false.
+      if (clientPromise.isReady) return clientPromise;
+      // Try reconnecting
+      await clientPromise.connect();
+      return clientPromise;
     } catch {
-      // Previous attempt failed — retry below.
-      connectPromise = null;
+      clientPromise = null;
     }
   }
 
-  connectPromise = (async () => {
-    // Trust the URL scheme: redis:// = plain, rediss:// = TLS.
-    // ioredis handles rediss:// natively. No manual TLS override needed.
-    const client = new Redis(url, {
-      lazyConnect: true,
-      maxRetriesPerRequest: 2,
-      connectTimeout: 5_000,
-    });
-
+  try {
+    const client = createClient({ url });
     client.on('error', (err) => {
-      lastClientError = err instanceof Error ? err.message : String(err);
+      lastError = err instanceof Error ? err.message : String(err);
       console.error('Redis client error', err);
     });
-
     await client.connect();
+    clientPromise = client;
     return client;
-  })();
-
-  try {
-    return await connectPromise;
   } catch (err) {
-    lastClientError = err instanceof Error ? err.message : String(err);
+    lastError = err instanceof Error ? err.message : String(err);
     console.error('Redis connect failed', err);
-    connectPromise = null;
+    clientPromise = null;
     return null;
   }
 }
 
 export async function readState(): Promise<TournamentState> {
-  const redis = await getConnectedClient();
+  const redis = await getClient();
   if (!redis) {
     return {
-      rev: memoryState.rev,
-      groupMatches: { ...memoryState.groupMatches },
-      bracketScores: { ...memoryState.bracketScores },
+      ...memoryState,
       persistent: false,
       _debug: process.env.REDIS_URL || process.env.KV_URL
-        ? { reason: 'connect-error', envSeen: describeEnv(), error: lastClientError ?? 'failed to connect' }
+        ? { reason: 'connect-error', envSeen: describeEnv(), error: lastError ?? 'failed to connect' }
         : { reason: 'no-env', envSeen: describeEnv() },
     };
   }
   try {
-    const raw = await redis.get(K_STATE);
+    const raw = await redis.get(K);
     if (!raw) {
-      return { ...EMPTY_STATE, groupMatches: {}, bracketScores: {}, persistent: true };
+      return { ...EMPTY, groupMatches: {}, bracketScores: {}, persistent: true };
     }
-    const parsed = JSON.parse(raw) as Omit<TournamentState, 'persistent'>;
+    const parsed = JSON.parse(raw);
     return {
       rev: parsed.rev ?? 0,
       groupMatches: parsed.groupMatches ?? {},
@@ -122,11 +98,9 @@ export async function readState(): Promise<TournamentState> {
     };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.error('Redis read failed, falling back to memory', err);
+    console.error('Redis read failed', err);
     return {
-      rev: memoryState.rev,
-      groupMatches: { ...memoryState.groupMatches },
-      bracketScores: { ...memoryState.bracketScores },
+      ...memoryState,
       persistent: false,
       _debug: { reason: 'read-error', envSeen: describeEnv(), error: msg },
     };
@@ -139,7 +113,7 @@ export async function writeState(update: {
   reset?: boolean;
 }): Promise<TournamentState> {
   const current = await readState();
-  const base: Omit<TournamentState, 'persistent'> = update.reset
+  const base = update.reset
     ? { rev: current.rev + 1, groupMatches: {}, bracketScores: {} }
     : {
         rev: current.rev + 1,
@@ -147,14 +121,14 @@ export async function writeState(update: {
         bracketScores: { ...current.bracketScores, ...(update.bracketScores ?? {}) },
       };
 
-  const redis = await getConnectedClient();
+  const redis = await getClient();
   let persistent = false;
   if (redis) {
     try {
-      await redis.set(K_STATE, JSON.stringify(base));
+      await redis.set(K, JSON.stringify(base));
       persistent = true;
     } catch (err) {
-      console.error('Redis write failed, falling back to memory', err);
+      console.error('Redis write failed', err);
       memoryState = base;
     }
   } else {
