@@ -114,6 +114,7 @@ export function GoldCupView({ classification, bracketScores, onChange }: Props) 
                 scores={bracketScores}
                 onChange={onChange}
                 meta={GOLD_QF_META[i]}
+                format="2-sets"
               />
             ))}
           </Round>
@@ -129,6 +130,7 @@ export function GoldCupView({ classification, bracketScores, onChange }: Props) 
                 scores={bracketScores}
                 onChange={onChange}
                 meta={GOLD_SF_META[i]}
+                format="2-sets"
               />
             ))}
           </Round>
@@ -139,7 +141,7 @@ export function GoldCupView({ classification, bracketScores, onChange }: Props) 
             </div>
             <div className="flex flex-col gap-2">
               <div className="text-center text-[10px] font-semibold uppercase tracking-[0.16em] text-amber-300">
-                🥇 Gold Final
+                🥇 Gold Final (Best of 3)
               </div>
               <BracketMatch
                 cup="gold"
@@ -149,6 +151,7 @@ export function GoldCupView({ classification, bracketScores, onChange }: Props) 
                 scores={bracketScores}
                 onChange={onChange}
                 meta={GOLD_FINAL_META}
+                format="3-sets"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -162,6 +165,7 @@ export function GoldCupView({ classification, bracketScores, onChange }: Props) 
                 teams={thirdPlace}
                 scores={bracketScores}
                 onChange={onChange}
+                format="2-sets"
                 meta={GOLD_3P_META}
               />
             </div>

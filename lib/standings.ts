@@ -133,7 +133,7 @@ export function getClassification(gm: GroupMatches): Classification {
   };
 }
 
-/** Compute winner or loser of a bracket match from stored scores. */
+/** Compute winner or loser of a bracket match from stored set scores. */
 export function bracketResult(
   bs: BracketScores,
   cup: string,
@@ -141,19 +141,26 @@ export function bracketResult(
   matchIdx: number,
   teams: [QualifiedTeam | null, QualifiedTeam | null],
 ): { winner: QualifiedTeam | null; loser: QualifiedTeam | null } {
-  const k1 = `${cup}-${round}-${matchIdx}-1`;
-  const k2 = `${cup}-${round}-${matchIdx}-2`;
-  const v1 = bs[k1];
-  const v2 = bs[k2];
-  if (v1 === undefined || v2 === undefined || v1 === '' || v2 === '') {
-    return { winner: null, loser: null };
-  }
-  const s1 = parseInt(v1, 10);
-  const s2 = parseInt(v2, 10);
-  if (Number.isNaN(s1) || Number.isNaN(s2)) return { winner: null, loser: null };
   if (!teams[0] || !teams[1]) return { winner: null, loser: null };
-  if (s1 === s2) return { winner: null, loser: null };
-  return s1 > s2
+
+  const prefix = `${cup}-${round}-${matchIdx}`;
+  let sets: [number, number] = [0, 0];
+
+  for (let s = 1; s <= 3; s++) {
+    const v1 = bs[`${prefix}-1-s${s}`];
+    const v2 = bs[`${prefix}-2-s${s}`];
+    if (v1 === undefined || v2 === undefined || v1 === '' || v2 === '') break;
+    const n1 = parseInt(v1, 10);
+    const n2 = parseInt(v2, 10);
+    if (Number.isNaN(n1) || Number.isNaN(n2)) break;
+    if (n1 > n2) sets[0]++;
+    else if (n2 > n1) sets[1]++;
+  }
+
+  const decided = sets[0] >= 2 || sets[1] >= 2;
+  if (!decided) return { winner: null, loser: null };
+
+  return sets[0] >= 2
     ? { winner: teams[0], loser: teams[1] }
     : { winner: teams[1], loser: teams[0] };
 }

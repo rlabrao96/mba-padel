@@ -71,6 +71,7 @@ export function SilverCupView({ classification, bracketScores, onChange }: Props
                 teams={match}
                 scores={bracketScores}
                 onChange={onChange}
+                format="2-sets"
                 meta={SILVER_SF_META[i]}
               />
             ))}
@@ -83,6 +84,7 @@ export function SilverCupView({ classification, bracketScores, onChange }: Props
               teams={final}
               scores={bracketScores}
               onChange={onChange}
+              format="2-sets"
               meta={SILVER_FINAL_META}
             />
           </Round>

@@ -63,6 +63,7 @@ export function BronzeCupView({ classification, bracketScores, onChange }: Props
                 teams={match}
                 scores={bracketScores}
                 onChange={onChange}
+                format="2-sets"
                 meta={BRONZE_SF_META[i]}
               />
             ))}
@@ -75,6 +76,7 @@ export function BronzeCupView({ classification, bracketScores, onChange }: Props
               teams={final}
               scores={bracketScores}
               onChange={onChange}
+              format="2-sets"
               meta={BRONZE_FINAL_META}
             />
           </Round>
