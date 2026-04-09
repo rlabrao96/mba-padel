@@ -5,9 +5,11 @@ export type TournamentState = {
   rev: number;
   groupMatches: GroupMatches;
   bracketScores: BracketScores;
+  /** False when the server has no Redis configured and is using a non-persistent in-memory store. */
+  persistent: boolean;
 };
 
-const EMPTY_STATE: TournamentState = {
+const EMPTY_STATE: Omit<TournamentState, 'persistent'> = {
   rev: 0,
   groupMatches: {},
   bracketScores: {},
@@ -16,7 +18,7 @@ const EMPTY_STATE: TournamentState = {
 const K_STATE = 'tournament:state:v1';
 
 // In-memory fallback used when Redis env vars are not configured (local dev).
-let memoryState: TournamentState = {
+let memoryState: Omit<TournamentState, 'persistent'> = {
   ...EMPTY_STATE,
   groupMatches: {},
   bracketScores: {},
@@ -44,17 +46,19 @@ export async function readState(): Promise<TournamentState> {
       rev: memoryState.rev,
       groupMatches: { ...memoryState.groupMatches },
       bracketScores: { ...memoryState.bracketScores },
+      persistent: false,
     };
   }
   try {
-    const raw = await redis.get<TournamentState>(K_STATE);
+    const raw = await redis.get<Omit<TournamentState, 'persistent'>>(K_STATE);
     if (!raw) {
-      return { ...EMPTY_STATE, groupMatches: {}, bracketScores: {} };
+      return { ...EMPTY_STATE, groupMatches: {}, bracketScores: {}, persistent: true };
     }
     return {
       rev: raw.rev ?? 0,
       groupMatches: raw.groupMatches ?? {},
       bracketScores: raw.bracketScores ?? {},
+      persistent: true,
     };
   } catch (err) {
     console.error('Redis read failed, falling back to memory', err);
@@ -62,6 +66,7 @@ export async function readState(): Promise<TournamentState> {
       rev: memoryState.rev,
       groupMatches: { ...memoryState.groupMatches },
       bracketScores: { ...memoryState.bracketScores },
+      persistent: false,
     };
   }
 }
@@ -72,29 +77,27 @@ export async function writeState(update: {
   reset?: boolean;
 }): Promise<TournamentState> {
   const current = await readState();
-  let next: TournamentState;
-
-  if (update.reset) {
-    next = { rev: current.rev + 1, groupMatches: {}, bracketScores: {} };
-  } else {
-    next = {
-      rev: current.rev + 1,
-      groupMatches: { ...current.groupMatches, ...(update.groupMatches ?? {}) },
-      bracketScores: { ...current.bracketScores, ...(update.bracketScores ?? {}) },
-    };
-  }
+  const base: Omit<TournamentState, 'persistent'> = update.reset
+    ? { rev: current.rev + 1, groupMatches: {}, bracketScores: {} }
+    : {
+        rev: current.rev + 1,
+        groupMatches: { ...current.groupMatches, ...(update.groupMatches ?? {}) },
+        bracketScores: { ...current.bracketScores, ...(update.bracketScores ?? {}) },
+      };
 
   const redis = getClient();
+  let persistent = false;
   if (redis) {
     try {
-      await redis.set(K_STATE, next);
+      await redis.set(K_STATE, base);
+      persistent = true;
     } catch (err) {
       console.error('Redis write failed, falling back to memory', err);
-      memoryState = next;
+      memoryState = base;
     }
   } else {
-    memoryState = next;
+    memoryState = base;
   }
 
-  return next;
+  return { ...base, persistent };
 }

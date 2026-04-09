@@ -19,15 +19,19 @@ export function Header({ status, lastUpdated }: Props) {
   const dotClass =
     status === 'live'
       ? 'bg-emerald-400 animate-pulse-slow'
-      : status === 'offline'
-        ? 'bg-amber-400'
-        : 'bg-slate-400';
+      : status === 'local-only'
+        ? 'bg-red-400 animate-pulse-slow'
+        : status === 'offline'
+          ? 'bg-amber-400'
+          : 'bg-slate-400';
   const label =
     status === 'live'
       ? `Live · updated ${secondsAgo}s ago`
-      : status === 'offline'
-        ? 'Offline · retrying'
-        : 'Connecting…';
+      : status === 'local-only'
+        ? 'Local only · NOT syncing'
+        : status === 'offline'
+          ? 'Offline · retrying'
+          : 'Connecting…';
 
   return (
     <header className="relative overflow-hidden border-b border-border/60 bg-gradient-to-br from-surface to-bg">

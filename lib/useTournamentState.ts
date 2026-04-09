@@ -9,7 +9,7 @@ export type TournamentState = {
   bracketScores: BracketScores;
 };
 
-export type SyncStatus = 'connecting' | 'live' | 'offline';
+export type SyncStatus = 'connecting' | 'live' | 'offline' | 'local-only';
 
 const LS_KEY = 'adidas_mba_padel_state_v1';
 const POLL_MS = 4000;
@@ -55,9 +55,14 @@ export function useTournamentState() {
     try {
       const res = await fetch('/api/state', { cache: 'no-store' });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const next: TournamentState = await res.json();
-      setStatus('live');
+      const raw: TournamentState & { persistent?: boolean } = await res.json();
+      setStatus(raw.persistent === false ? 'local-only' : 'live');
       setLastUpdated(Date.now());
+      const next: TournamentState = {
+        rev: raw.rev,
+        groupMatches: raw.groupMatches,
+        bracketScores: raw.bracketScores,
+      };
       if (next.rev >= localRevRef.current) {
         localRevRef.current = next.rev;
         setState(next);
@@ -103,9 +108,14 @@ export function useTournamentState() {
           body: JSON.stringify(update),
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const server: TournamentState = await res.json();
-        setStatus('live');
+        const raw: TournamentState & { persistent?: boolean } = await res.json();
+        setStatus(raw.persistent === false ? 'local-only' : 'live');
         setLastUpdated(Date.now());
+        const server: TournamentState = {
+          rev: raw.rev,
+          groupMatches: raw.groupMatches,
+          bracketScores: raw.bracketScores,
+        };
         if (server.rev >= localRevRef.current) {
           localRevRef.current = server.rev;
           setState(server);

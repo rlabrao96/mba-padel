@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { Header } from '@/components/Header';
+import { StorageWarning } from '@/components/StorageWarning';
 import { Tabs, TabKey } from '@/components/Tabs';
 import { GroupsView } from '@/components/GroupsView';
 import { ScheduleView } from '@/components/ScheduleView';
@@ -38,6 +39,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       <Header status={status} lastUpdated={lastUpdated} />
+      <StorageWarning status={status} />
       <Tabs active={tab} onChange={setTab} />
 
       <main className="mx-auto max-w-6xl px-3 py-5 sm:px-4 sm:py-8">
