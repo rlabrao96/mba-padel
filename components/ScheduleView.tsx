@@ -137,13 +137,13 @@ function tintClasses(tint: SlotMatch['tint']) {
 
 function SlotRow({ slot }: { slot: Slot }) {
   return (
-    <div className="grid grid-cols-[80px_1fr] gap-3 border-b border-border/30 py-3 last:border-b-0">
-      <div className="text-sm font-bold text-primary-bright">{slot.time}</div>
-      <div className="flex flex-wrap gap-2">
+    <div className="border-b border-border/30 py-3 last:border-b-0">
+      <div className="mb-2 text-sm font-bold text-primary-bright sm:mb-0">{slot.time}</div>
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
         {slot.matches.map((m, i) => (
           <div
             key={i}
-            className={`min-w-[180px] rounded-lg border px-3 py-2 text-xs ${tintClasses(m.tint)}`}
+            className={`rounded-lg border px-3 py-2 text-xs ${tintClasses(m.tint)}`}
           >
             <div className="text-[10px] uppercase tracking-wider text-text-dim">
               {m.court > 0 ? `Court ${m.court} · ${m.group}` : m.group}

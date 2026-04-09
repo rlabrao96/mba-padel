@@ -169,19 +169,19 @@ export function GroupsView({ groupMatches, onScoreChange, onCalculate, onReset }
                       return (
                         <div
                           key={key}
-                          className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 border-b border-border/20 py-2 last:border-b-0"
+                          className="grid grid-cols-[1fr_auto_1fr] items-center gap-1.5 border-b border-border/20 py-2 last:border-b-0 sm:gap-3"
                         >
                           <div
-                            className={`flex items-center justify-end gap-2 text-right text-sm ${
+                            className={`flex items-center justify-end gap-1 text-right sm:gap-2 ${
                               decided ? (leftWinner ? 'text-white' : 'text-text-dim') : 'text-white'
                             }`}
                           >
-                            <span className="flex-1 truncate font-medium">{ta.short}</span>
-                            <span className="inline-flex h-5 min-w-[22px] items-center justify-center rounded bg-surface-2/80 px-1 font-mono text-[10px] font-bold text-text-dim">
+                            <span className="min-w-0 flex-1 truncate text-[13px] font-medium sm:text-sm">{ta.short}</span>
+                            <span className="hidden min-w-[22px] items-center justify-center rounded bg-surface-2/80 px-1 font-mono text-[10px] font-bold text-text-dim sm:inline-flex">
                               #{ta.id}
                             </span>
                           </div>
-                          <div className="flex items-center gap-1.5">
+                          <div className="flex items-center gap-1 sm:gap-1.5">
                             <input
                               inputMode="numeric"
                               type="number"
@@ -190,9 +190,9 @@ export function GroupsView({ groupMatches, onScoreChange, onCalculate, onReset }
                               value={m.s1}
                               onChange={(e) => onScoreChange(key, 's1', e.target.value)}
                               onFocus={(e) => e.currentTarget.select()}
-                              className="h-9 w-10 rounded-md border border-border bg-surface-2 text-center text-sm font-bold text-white outline-none focus:border-primary-bright"
+                              className="h-8 w-9 rounded-md border border-border bg-surface-2 text-center text-sm font-bold text-white outline-none focus:border-primary-bright sm:h-9 sm:w-10"
                             />
-                            <span className="text-text-dim">–</span>
+                            <span className="text-xs text-text-dim sm:text-base">–</span>
                             <input
                               inputMode="numeric"
                               type="number"
@@ -201,18 +201,18 @@ export function GroupsView({ groupMatches, onScoreChange, onCalculate, onReset }
                               value={m.s2}
                               onChange={(e) => onScoreChange(key, 's2', e.target.value)}
                               onFocus={(e) => e.currentTarget.select()}
-                              className="h-9 w-10 rounded-md border border-border bg-surface-2 text-center text-sm font-bold text-white outline-none focus:border-primary-bright"
+                              className="h-8 w-9 rounded-md border border-border bg-surface-2 text-center text-sm font-bold text-white outline-none focus:border-primary-bright sm:h-9 sm:w-10"
                             />
                           </div>
                           <div
-                            className={`flex items-center gap-2 text-sm ${
+                            className={`flex items-center gap-1 sm:gap-2 ${
                               decided ? (rightWinner ? 'text-white' : 'text-text-dim') : 'text-white'
                             }`}
                           >
-                            <span className="inline-flex h-5 min-w-[22px] items-center justify-center rounded bg-surface-2/80 px-1 font-mono text-[10px] font-bold text-text-dim">
+                            <span className="hidden min-w-[22px] items-center justify-center rounded bg-surface-2/80 px-1 font-mono text-[10px] font-bold text-text-dim sm:inline-flex">
                               #{tb.id}
                             </span>
-                            <span className="flex-1 truncate font-medium">{tb.short}</span>
+                            <span className="min-w-0 flex-1 truncate text-[13px] font-medium sm:text-sm">{tb.short}</span>
                           </div>
                         </div>
                       );

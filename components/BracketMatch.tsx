@@ -27,7 +27,7 @@ export function BracketMatch({ cup, round, matchIdx, teams, scores, onChange, me
   const botWinner = decided && s2 > s1;
 
   return (
-    <div className="w-[200px] overflow-hidden rounded-xl border border-border/70 bg-surface/80 shadow-md shadow-black/30 sm:w-[240px]">
+    <div className="w-[260px] overflow-hidden rounded-xl border border-border/70 bg-surface/80 shadow-md shadow-black/30 sm:w-[280px]">
       {meta && (
         <div className="flex items-center justify-between gap-2 border-b border-border/50 bg-surface-2/50 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.12em] text-text-dim sm:px-3 sm:text-[10px]">
           <span>{meta.time}</span>
