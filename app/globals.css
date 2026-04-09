@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #05132e;
+  --surface: #0a1f44;
+  --surface-2: #0f2a5c;
+  --border: #1a3a7a;
+  --primary: #0066cc;
+  --primary-bright: #1a8cff;
+  --text: #ffffff;
+  --text-dim: #8fa8cc;
+  --gold: #f0c040;
+  --silver: #c0d0e0;
+  --bronze: #cd7f32;
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at 20% -10%, rgba(26, 140, 255, 0.12), transparent 60%),
+    radial-gradient(900px 500px at 90% 10%, rgba(0, 102, 204, 0.10), transparent 60%),
+    var(--bg);
+  min-height: 100vh;
+}
+
+/* Hide number input spinners */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+/* Custom scrollbar for horizontal bracket scroll */
+.bracket-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+.bracket-scroll::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+.bracket-scroll::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
