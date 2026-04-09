@@ -42,15 +42,15 @@ export function GroupsView({ groupMatches, onScoreChange, onCalculate, onReset }
               key={gi}
               className="overflow-hidden rounded-2xl border border-border/60 bg-surface/70 shadow-lg shadow-black/20"
             >
-              <div className="flex items-center justify-between border-b border-border/60 bg-surface-2/70 px-5 py-3">
-                <div className="font-display text-xl tracking-[0.18em] text-white">
+              <div className="flex items-center justify-between gap-2 border-b border-border/60 bg-surface-2/70 px-3 py-2.5 sm:px-5 sm:py-3">
+                <div className="font-display text-lg tracking-[0.18em] text-white sm:text-xl">
                   {g.name}
                 </div>
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap justify-end gap-1 sm:gap-1.5">
                   {schools.map((s) => (
                     <span
                       key={s}
-                      className="rounded-full bg-surface px-2.5 py-0.5 text-[10px] font-medium text-text-dim"
+                      className="rounded-full bg-surface px-2 py-0.5 text-[9px] font-medium text-text-dim sm:px-2.5 sm:text-[10px]"
                     >
                       {s}
                     </span>
@@ -61,14 +61,27 @@ export function GroupsView({ groupMatches, onScoreChange, onCalculate, onReset }
               <table className="w-full border-collapse text-left">
                 <thead>
                   <tr>
-                    {['#', 'Team', 'W', 'L', 'GF', 'GA', 'Diff'].map((h) => (
-                      <th
-                        key={h}
-                        className="border-b border-border/60 px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-text-dim"
-                      >
-                        {h}
-                      </th>
-                    ))}
+                    <th className="border-b border-border/60 px-2 py-2 text-[9px] font-semibold uppercase tracking-[0.08em] text-text-dim sm:px-4 sm:py-2.5 sm:text-[10px] sm:tracking-[0.12em]">
+                      #
+                    </th>
+                    <th className="border-b border-border/60 px-2 py-2 text-[9px] font-semibold uppercase tracking-[0.08em] text-text-dim sm:px-4 sm:py-2.5 sm:text-[10px] sm:tracking-[0.12em]">
+                      Team
+                    </th>
+                    <th className="border-b border-border/60 px-1.5 py-2 text-center text-[9px] font-semibold uppercase tracking-[0.08em] text-text-dim sm:px-4 sm:py-2.5 sm:text-[10px] sm:tracking-[0.12em] sm:text-left">
+                      W
+                    </th>
+                    <th className="border-b border-border/60 px-1.5 py-2 text-center text-[9px] font-semibold uppercase tracking-[0.08em] text-text-dim sm:px-4 sm:py-2.5 sm:text-[10px] sm:tracking-[0.12em] sm:text-left">
+                      L
+                    </th>
+                    <th className="hidden border-b border-border/60 px-2 py-2 text-[9px] font-semibold uppercase tracking-[0.08em] text-text-dim sm:table-cell sm:px-4 sm:py-2.5 sm:text-[10px] sm:tracking-[0.12em]">
+                      GF
+                    </th>
+                    <th className="hidden border-b border-border/60 px-2 py-2 text-[9px] font-semibold uppercase tracking-[0.08em] text-text-dim sm:table-cell sm:px-4 sm:py-2.5 sm:text-[10px] sm:tracking-[0.12em]">
+                      GA
+                    </th>
+                    <th className="border-b border-border/60 px-2 py-2 text-center text-[9px] font-semibold uppercase tracking-[0.08em] text-text-dim sm:px-4 sm:py-2.5 sm:text-[10px] sm:tracking-[0.12em] sm:text-left">
+                      Diff
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -91,29 +104,39 @@ export function GroupsView({ groupMatches, onScoreChange, onCalculate, onReset }
                             : 'bg-surface-2 text-text-dim';
                     return (
                       <tr key={s.id} className={`${rowCls} border-b border-border/30 last:border-b-0`}>
-                        <td className="px-4 py-3 align-middle">
+                        <td className="px-2 py-2.5 align-middle sm:px-4 sm:py-3">
                           <span className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold ${badgeCls}`}>
                             {pos + 1}
                           </span>
                         </td>
-                        <td className="px-4 py-3 align-middle">
-                          <div className="flex items-center gap-2">
-                            <span className="inline-flex h-5 min-w-[22px] items-center justify-center rounded bg-surface-2/80 px-1 font-mono text-[10px] font-bold text-text-dim">
+                        <td className="px-2 py-2.5 align-middle sm:px-4 sm:py-3">
+                          <div className="flex items-center gap-1.5 sm:gap-2">
+                            <span className="inline-flex h-5 min-w-[20px] items-center justify-center rounded bg-surface-2/80 px-1 font-mono text-[10px] font-bold text-text-dim">
                               #{t.id}
                             </span>
-                            <div className="leading-tight">
-                              <div className="text-sm font-semibold text-white">{t.short}</div>
-                              <div className="text-[10px] uppercase tracking-wider text-text-dim">
+                            <div className="min-w-0 leading-tight">
+                              <div className="truncate text-[13px] font-semibold text-white sm:text-sm">
+                                {t.short}
+                              </div>
+                              <div className="text-[9px] uppercase tracking-wider text-text-dim sm:text-[10px]">
                                 {t.school}
                               </div>
                             </div>
                           </div>
                         </td>
-                        <td className="px-4 py-3 align-middle text-sm font-semibold text-white">{s.w}</td>
-                        <td className="px-4 py-3 align-middle text-sm text-text-dim">{s.l}</td>
-                        <td className="px-4 py-3 align-middle text-sm text-white">{s.gf}</td>
-                        <td className="px-4 py-3 align-middle text-sm text-text-dim">{s.ga}</td>
-                        <td className="px-4 py-3 align-middle text-sm font-semibold text-white">
+                        <td className="px-1.5 py-2.5 text-center align-middle text-sm font-semibold text-white sm:px-4 sm:py-3 sm:text-left">
+                          {s.w}
+                        </td>
+                        <td className="px-1.5 py-2.5 text-center align-middle text-sm text-text-dim sm:px-4 sm:py-3 sm:text-left">
+                          {s.l}
+                        </td>
+                        <td className="hidden px-2 py-2.5 align-middle text-sm text-white sm:table-cell sm:px-4 sm:py-3">
+                          {s.gf}
+                        </td>
+                        <td className="hidden px-2 py-2.5 align-middle text-sm text-text-dim sm:table-cell sm:px-4 sm:py-3">
+                          {s.ga}
+                        </td>
+                        <td className="px-2 py-2.5 text-center align-middle text-sm font-semibold text-white sm:px-4 sm:py-3 sm:text-left">
                           {diff > 0 ? '+' : ''}
                           {diff}
                         </td>
@@ -123,8 +146,8 @@ export function GroupsView({ groupMatches, onScoreChange, onCalculate, onReset }
                 </tbody>
               </table>
 
-              <div className="border-t border-border/50 px-5 py-4">
-                <div className="mb-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-dim">
+              <div className="border-t border-border/50 px-3 py-3 sm:px-5 sm:py-4">
+                <div className="mb-2.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-dim sm:mb-3">
                   Matches
                 </div>
                 <div className="space-y-1">

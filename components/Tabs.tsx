@@ -27,7 +27,7 @@ export function Tabs({ active, onChange }: Props) {
               key={t.key}
               type="button"
               onClick={() => onChange(t.key)}
-              className={`min-w-[96px] flex-1 whitespace-nowrap px-4 py-3.5 text-xs font-semibold uppercase tracking-wider transition-colors sm:text-sm ${
+              className={`min-w-[80px] flex-1 whitespace-nowrap px-3 py-3 text-[11px] font-semibold uppercase tracking-wider transition-colors sm:min-w-[96px] sm:px-4 sm:py-3.5 sm:text-sm ${
                 isActive
                   ? 'border-b-2 border-primary-bright text-white'
                   : 'border-b-2 border-transparent text-text-dim hover:bg-surface/70 hover:text-white'
