@@ -1,7 +1,20 @@
 'use client';
 
-import { BracketMatch } from './BracketMatch';
+import { BracketMatch, MatchMeta } from './BracketMatch';
 import { getTeam } from '@/lib/data';
+
+const GOLD_QF_META: MatchMeta[] = [
+  { time: 'Sat 7:30 PM', court: 1 }, // 1 vs 8
+  { time: 'Sat 7:30 PM', court: 2 }, // 4 vs 5
+  { time: 'Sat 7:30 PM', court: 3 }, // 2 vs 7
+  { time: 'Sat 7:30 PM', court: 4 }, // 3 vs 6
+];
+const GOLD_SF_META: MatchMeta[] = [
+  { time: 'Sun 12:00 PM', court: 1 },
+  { time: 'Sun 12:00 PM', court: 2 },
+];
+const GOLD_FINAL_META: MatchMeta = { time: 'Sun 2:00 PM', court: 1 };
+const GOLD_3P_META: MatchMeta = { time: 'Sun 1:00 PM', court: 2 };
 import {
   BracketScores,
   bracketResult,
@@ -100,6 +113,7 @@ export function GoldCupView({ classification, bracketScores, onChange }: Props) 
                 teams={match}
                 scores={bracketScores}
                 onChange={onChange}
+                meta={GOLD_QF_META[i]}
               />
             ))}
           </Round>
@@ -114,6 +128,7 @@ export function GoldCupView({ classification, bracketScores, onChange }: Props) 
                 teams={match}
                 scores={bracketScores}
                 onChange={onChange}
+                meta={GOLD_SF_META[i]}
               />
             ))}
           </Round>
@@ -133,6 +148,7 @@ export function GoldCupView({ classification, bracketScores, onChange }: Props) 
                 teams={final}
                 scores={bracketScores}
                 onChange={onChange}
+                meta={GOLD_FINAL_META}
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -146,6 +162,7 @@ export function GoldCupView({ classification, bracketScores, onChange }: Props) 
                 teams={thirdPlace}
                 scores={bracketScores}
                 onChange={onChange}
+                meta={GOLD_3P_META}
               />
             </div>
           </div>

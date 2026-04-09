@@ -1,6 +1,6 @@
 'use client';
 
-import { BracketMatch } from './BracketMatch';
+import { BracketMatch, MatchMeta } from './BracketMatch';
 import { CupHeader, Placeholder, Round } from './GoldCupView';
 import {
   BracketScores,
@@ -8,6 +8,12 @@ import {
   Classification,
   QualifiedTeam,
 } from '@/lib/standings';
+
+const BRONZE_SF_META: MatchMeta[] = [
+  { time: 'Sat 8:30 PM', court: 1 },
+  { time: 'Sat 8:30 PM', court: 2 },
+];
+const BRONZE_FINAL_META: MatchMeta = { time: 'Sun 11:00 AM', court: 3 };
 
 type Props = {
   classification: Classification;
@@ -45,8 +51,8 @@ export function BronzeCupView({ classification, bracketScores, onChange }: Props
         subtitle="Non-qualified teams · Semifinals → Final"
       />
 
-      <div className="bracket-scroll -mx-4 overflow-x-auto px-4 pb-3">
-        <div className="flex items-center gap-8 min-w-max">
+      <div className="bracket-scroll -mx-3 overflow-x-auto px-3 pb-3 sm:-mx-4 sm:px-4">
+        <div className="flex items-start gap-6 min-w-max sm:items-center sm:gap-8">
           <Round title="Semifinals">
             {sf.map((match, i) => (
               <BracketMatch
@@ -57,6 +63,7 @@ export function BronzeCupView({ classification, bracketScores, onChange }: Props
                 teams={match}
                 scores={bracketScores}
                 onChange={onChange}
+                meta={BRONZE_SF_META[i]}
               />
             ))}
           </Round>
@@ -68,6 +75,7 @@ export function BronzeCupView({ classification, bracketScores, onChange }: Props
               teams={final}
               scores={bracketScores}
               onChange={onChange}
+              meta={BRONZE_FINAL_META}
             />
           </Round>
         </div>
