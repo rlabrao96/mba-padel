@@ -11,17 +11,17 @@ export function RulesView() {
       <InfoBox title="Match formats">
         <ul>
           <li>
-            <strong>Group stage:</strong> Super Set to 8 games with advantage
-            point and golden point (tie-break point at 7–7).
+            <strong>Group stage:</strong> Super Set to 8 games with golden
+            point (at 40–40, the next point wins the game — no advantage).
           </li>
           <li>
-            <strong>Knockout rounds (QF, SF, Bronze/Silver cups):</strong> 2
+            <strong>Knockout rounds (QF, SF, Silver/Bronze cups):</strong> 2
             sets with advantage point. If tied at one set each, a Super
             Tie-Break (10 points) decides the match.
           </li>
           <li>
-            <strong>Finals (Gold, Silver, Bronze):</strong> Best of 3 sets with
-            advantage point.
+            <strong>Gold Cup Final:</strong> Best of 3 sets with advantage
+            point.
           </li>
         </ul>
       </InfoBox>
