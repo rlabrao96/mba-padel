@@ -5,11 +5,24 @@ export function RulesView() {
         <ul>
           <li>12 teams divided into 3 groups of 4 (pre-drawn).</li>
           <li>Round-robin within each group — 6 matches per group, 18 total.</li>
+        </ul>
+      </InfoBox>
+
+      <InfoBox title="Match formats">
+        <ul>
           <li>
-            All matches are a <strong>Super Set to 8 games</strong> with side
-            changes and a star point (tie-break point at 7–7).
+            <strong>Group stage:</strong> Super Set to 8 games with advantage
+            point and golden point (tie-break point at 7–7).
           </li>
-          <li>Estimated duration: ~1 hour per match.</li>
+          <li>
+            <strong>Knockout rounds (QF, SF, Bronze/Silver cups):</strong> 2
+            sets with advantage point. If tied at one set each, a Super
+            Tie-Break (10 points) decides the match.
+          </li>
+          <li>
+            <strong>Finals (Gold, Silver, Bronze):</strong> Best of 3 sets with
+            advantage point.
+          </li>
         </ul>
       </InfoBox>
 
