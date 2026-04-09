@@ -1,4 +1,4 @@
-import { Redis } from '@upstash/redis';
+import Redis from 'ioredis';
 import type { GroupMatches, BracketScores } from './standings';
 
 export type TournamentState = {
@@ -24,19 +24,39 @@ let memoryState: Omit<TournamentState, 'persistent'> = {
   bracketScores: {},
 };
 
+// Module-level cached client. On Vercel, warm serverless instances reuse this
+// across invocations; cold starts pay a single connection setup.
+let cachedClient: Redis | null = null;
+
 /**
- * Build a Redis client from whichever env-var pair is available:
- *   - Vercel Marketplace Upstash integration injects UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN
- *   - The older Vercel KV integration injects KV_REST_API_URL / KV_REST_API_TOKEN
- * We support both so it "just works" whichever path the user took in the Vercel dashboard.
+ * Build / return a cached Redis client. We accept several env-var names so
+ * the app "just works" whether the user attached:
+ *   - Vercel Redis (native) → REDIS_URL
+ *   - Upstash Redis (Marketplace) → UPSTASH_REDIS_REST_URL is for the REST
+ *     SDK and NOT supported here; if present we ignore it and the memory
+ *     fallback kicks in. Users should instead use REDIS_URL when possible.
+ *   - Vercel KV (legacy) → KV_URL
  */
 function getClient(): Redis | null {
-  const url =
-    process.env.UPSTASH_REDIS_REST_URL ?? process.env.KV_REST_API_URL;
-  const token =
-    process.env.UPSTASH_REDIS_REST_TOKEN ?? process.env.KV_REST_API_TOKEN;
-  if (!url || !token) return null;
-  return new Redis({ url, token });
+  const url = process.env.REDIS_URL ?? process.env.KV_URL;
+  if (!url) return null;
+  if (cachedClient) return cachedClient;
+
+  cachedClient = new Redis(url, {
+    lazyConnect: false,
+    maxRetriesPerRequest: 2,
+    enableOfflineQueue: false,
+    // Short connection timeout — we'd rather fall through to local state
+    // than hang the request for 10+ seconds on a bad config.
+    connectTimeout: 5_000,
+  });
+
+  cachedClient.on('error', (err) => {
+    // Log but don't crash the module — reads/writes will surface the error.
+    console.error('Redis client error', err);
+  });
+
+  return cachedClient;
 }
 
 export async function readState(): Promise<TournamentState> {
@@ -50,14 +70,20 @@ export async function readState(): Promise<TournamentState> {
     };
   }
   try {
-    const raw = await redis.get<Omit<TournamentState, 'persistent'>>(K_STATE);
+    const raw = await redis.get(K_STATE);
     if (!raw) {
-      return { ...EMPTY_STATE, groupMatches: {}, bracketScores: {}, persistent: true };
+      return {
+        ...EMPTY_STATE,
+        groupMatches: {},
+        bracketScores: {},
+        persistent: true,
+      };
     }
+    const parsed = JSON.parse(raw) as Omit<TournamentState, 'persistent'>;
     return {
-      rev: raw.rev ?? 0,
-      groupMatches: raw.groupMatches ?? {},
-      bracketScores: raw.bracketScores ?? {},
+      rev: parsed.rev ?? 0,
+      groupMatches: parsed.groupMatches ?? {},
+      bracketScores: parsed.bracketScores ?? {},
       persistent: true,
     };
   } catch (err) {
@@ -89,7 +115,7 @@ export async function writeState(update: {
   let persistent = false;
   if (redis) {
     try {
-      await redis.set(K_STATE, base);
+      await redis.set(K_STATE, JSON.stringify(base));
       persistent = true;
     } catch (err) {
       console.error('Redis write failed, falling back to memory', err);

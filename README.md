@@ -7,7 +7,7 @@ Live tournament web app for the **Adidas MBA Padel Tournament** — April 11–1
 - Super Set to 8 games
 - **Live shared results**: anyone with the link sees scores update within ~4 seconds
 
-Built with **Next.js 14** (App Router) + **Tailwind CSS** + **Upstash Redis** (installed via Vercel Marketplace).
+Built with **Next.js 14** (App Router) + **Tailwind CSS** + **Vercel Redis** (via `ioredis`).
 
 ## Local development
 
