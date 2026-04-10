@@ -12,7 +12,7 @@ export const TEAMS: Team[] = [
   { id: 4,  name: 'Guillermo Ochoa & Alec Roslin',             short: 'Ochoa / Roslin',        school: 'Wharton' },
   { id: 5,  name: 'Pelayo Alvarez & Bo Curry',                 short: 'Alvarez / Curry',       school: 'HBS' },
   { id: 6,  name: 'Rob Simon & Ben Keating',                   short: 'Simon / Keating',       school: 'HBS' },
-  { id: 7,  name: 'Alfredo Vara & Dante Undiano Cícero',       short: 'Vara / Undiano',        school: 'Yale SOM' },
+  { id: 7,  name: 'Vittorio Tosi & Sebastiano Cultrera di Montesano', short: 'Tosi / Cultrera', school: 'MIT' },
   { id: 8,  name: 'Rafael Labra & Jose Coloma',                short: 'Labra / Coloma',        school: 'Wharton' },
   { id: 9,  name: 'Ricardo Medinilla & Daniel Alameh',         short: 'Medinilla / Alameh',    school: 'Booth' },
   { id: 10, name: 'Daniel Rossi & Julio Del Rio',              short: 'Rossi / Del Rio',       school: 'Boston University' },

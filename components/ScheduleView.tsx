@@ -5,13 +5,14 @@ import { GROUPS, GROUP_ROUNDS, getTeam } from '@/lib/data';
 /**
  * Build the Saturday group-stage slot schedule.
  *
- * 4 courts per slot. We interleave rounds across groups so that no team plays
- * two consecutive matches. Pattern (court A/B/C/D):
- *   2:00 PM — G1 R1 × 2,  G2 R1 × 2
- *   3:00 PM — G3 R1 × 2,  G1 R2 × 2
- *   4:00 PM — G2 R2 × 2,  G3 R2 × 2
- *   5:00 PM — G1 R3 × 2,  G2 R3 × 2
- *   6:00 PM — G3 R3 × 2,  rest × 2
+ * Courts 3-4 available from 1 PM; all 4 courts from 2 PM.
+ * No team plays more than 2 consecutive matches.
+ *
+ *   1:00 PM — G1 R1 × 2  (courts 3-4)
+ *   2:00 PM — G2 R1 × 2,  G3 R1 × 2
+ *   3:00 PM — G1 R2 × 2,  G2 R2 × 2
+ *   4:00 PM — G3 R2 × 2,  G1 R3 × 2
+ *   5:00 PM — G2 R3 × 2,  G3 R3 × 2
  */
 type SlotMatch = {
   court: number;
@@ -36,36 +37,36 @@ function groupRoundMatches(gi: number, roundIdx: number): SlotMatch[] {
   });
 }
 
-function assignCourts(matches: SlotMatch[]): SlotMatch[] {
-  return matches.map((m, idx) => ({ ...m, court: idx + 1 }));
+function assignCourts(matches: SlotMatch[], startCourt = 1): SlotMatch[] {
+  return matches.map((m, idx) => ({ ...m, court: startCourt + idx }));
 }
 
 const SATURDAY: Slot[] = [
   {
+    time: '1:00 PM',
+    matches: assignCourts(groupRoundMatches(0, 0), 3),
+  },
+  {
     time: '2:00 PM',
-    matches: assignCourts([...groupRoundMatches(0, 0), ...groupRoundMatches(1, 0)]),
+    matches: assignCourts([...groupRoundMatches(1, 0), ...groupRoundMatches(2, 0)]),
   },
   {
     time: '3:00 PM',
-    matches: assignCourts([...groupRoundMatches(2, 0), ...groupRoundMatches(0, 1)]),
+    matches: assignCourts([...groupRoundMatches(0, 1), ...groupRoundMatches(1, 1)]),
   },
   {
     time: '4:00 PM',
-    matches: assignCourts([...groupRoundMatches(1, 1), ...groupRoundMatches(2, 1)]),
+    matches: assignCourts([...groupRoundMatches(2, 1), ...groupRoundMatches(0, 2)]),
   },
   {
     time: '5:00 PM',
-    matches: assignCourts([...groupRoundMatches(0, 2), ...groupRoundMatches(1, 2)]),
-  },
-  {
-    time: '6:00 PM',
-    matches: assignCourts(groupRoundMatches(2, 2)),
+    matches: assignCourts([...groupRoundMatches(1, 2), ...groupRoundMatches(2, 2)]),
   },
 ];
 
 const SATURDAY_KNOCKOUT: Slot[] = [
   {
-    time: '7:00 PM',
+    time: '6:00 PM',
     matches: [
       {
         court: 0,
@@ -76,7 +77,7 @@ const SATURDAY_KNOCKOUT: Slot[] = [
     ],
   },
   {
-    time: '7:30 PM',
+    time: '6:30 PM',
     matches: [
       { court: 1, group: 'Gold QF', tint: 'gold', label: 'Seed 1 vs Seed 8' },
       { court: 2, group: 'Gold QF', tint: 'gold', label: 'Seed 4 vs Seed 5' },
@@ -85,7 +86,7 @@ const SATURDAY_KNOCKOUT: Slot[] = [
     ],
   },
   {
-    time: '8:30 PM',
+    time: '7:30 PM',
     matches: [
       { court: 1, group: 'Bronze SF', tint: 'bronze', label: 'Semifinal 1' },
       { court: 2, group: 'Bronze SF', tint: 'bronze', label: 'Semifinal 2' },
